@@ -8,6 +8,16 @@ export interface TechnologyProfile {
   technologies: Technology[];
   languages: Record<string, number>;
   topics: string[];
+  categories: TechnologyCategories;
+}
+
+export interface TechnologyCategories {
+  frontend: string[];
+  backend: string[];
+  database: string[];
+  devops: string[];
+  ai: string[];
+  testing: string[];
 }
 
 export interface GeminiAnalysis {
@@ -37,12 +47,28 @@ export interface RepositoryDto {
   url: string;
 }
 
+export interface ScoreBreakdown {
+  repositoryQuality: number;
+  projectComplexity: number;
+  skillDiversity: number;
+  activity: number;
+  engineeringPractices: number;
+}
+
+export interface DeveloperScore {
+  score: number;
+  breakdown: ScoreBreakdown;
+}
+
 export interface AnalysisResult {
   profile: ProfileDto;
   repositories: RepositoryDto[];
   technologies: string[];
+  categories: TechnologyCategories;
   summary: string;
   experienceLevel: GeminiAnalysis["experienceLevel"];
+  score: number;
+  breakdown: ScoreBreakdown;
 }
 
 export interface ApiErrorResponse {

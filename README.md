@@ -56,8 +56,24 @@ Successful responses use a frontend-friendly DTO and contain the five most recen
     }
   ],
   "technologies": ["JavaScript"],
+  "categories": {
+    "frontend": [],
+    "backend": ["Node.js"],
+    "database": [],
+    "devops": [],
+    "ai": [],
+    "testing": []
+  },
   "summary": "A concise AI-generated profile summary.",
-  "experienceLevel": "Intermediate"
+  "experienceLevel": "Intermediate",
+  "score": 84,
+  "breakdown": {
+    "repositoryQuality": 28,
+    "projectComplexity": 21,
+    "skillDiversity": 17,
+    "activity": 10,
+    "engineeringPractices": 8
+  }
 }
 ```
 
@@ -98,6 +114,7 @@ src/
 ├── services/
 │   ├── gemini.service.ts       # Gemini REST integration
 │   ├── github.service.ts       # GitHub REST integration
+│   ├── scoring.service.ts      # Deterministic developer intelligence score
 │   └── technology.service.ts   # deterministic technology extraction
 └── types/
     ├── analysis.ts
@@ -105,7 +122,7 @@ src/
     └── index.ts
 ```
 
-The API route is kept thin. Services own external calls and deterministic extraction, while shared types define the contract between each layer. Gemini uses JSON response schema enforcement so consumers receive predictable fields. The client uses local React state for the single request lifecycle: idle, loading, error, or results.
+The API route is kept thin. Services own external calls and deterministic extraction, while shared types define the contract between each layer. Technology detection uses repository language statistics, topics, and a bounded scan of `package.json`, `requirements.txt`, `Dockerfile`, `README.md`, and GitHub workflow YAML from the 20 most recently updated original repositories. Detected skills are grouped into frontend, backend, database, DevOps, AI/ML, and testing categories. The developer intelligence score is deterministic and capped at 100: repository quality (30), project complexity (25), skill diversity (20), activity (15), and engineering practices (10). Gemini uses JSON response schema enforcement so consumers receive predictable fields. The client uses local React state for the single request lifecycle: idle, loading, error, or results.
 
 ## Verification
 

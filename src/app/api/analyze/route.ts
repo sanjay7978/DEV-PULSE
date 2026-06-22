@@ -2,6 +2,7 @@ import { AppError } from "@/lib/errors";
 import { analyzeRequestSchema } from "@/lib/validation";
 import { analyzeWithGemini } from "@/services/gemini.service";
 import { getGitHubProfile } from "@/services/github.service";
+import { calculateDeveloperScore } from "@/services/scoring.service";
 import { extractTechnologies } from "@/services/technology.service";
 import type { AnalysisResult, ApiErrorResponse } from "@/types";
 
@@ -33,6 +34,7 @@ export async function POST(request: Request): Promise<Response> {
     const { username } = requestData.data;
     const github = await getGitHubProfile(username);
     const technologyProfile = extractTechnologies(github);
+    const developerScore = calculateDeveloperScore(github, technologyProfile);
     const aiAnalysis = await analyzeWithGemini(github, technologyProfile);
     const result: AnalysisResult = {
       profile: {
@@ -53,8 +55,11 @@ export async function POST(request: Request): Promise<Response> {
         url: repository.html_url,
       })),
       technologies: technologyProfile.technologies.map((technology) => technology.name),
+      categories: technologyProfile.categories,
       summary: aiAnalysis.summary,
       experienceLevel: aiAnalysis.experienceLevel,
+      score: developerScore.score,
+      breakdown: developerScore.breakdown,
     };
     return Response.json(result);
   } catch (error) {

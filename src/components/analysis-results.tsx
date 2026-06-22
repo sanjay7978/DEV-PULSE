@@ -1,11 +1,30 @@
 import Image from "next/image";
-import { BookOpen, ExternalLink, GitFork, Star, Users } from "lucide-react";
-import type { AnalysisResult } from "@/types";
+import { BookOpen, ExternalLink, GitFork, Gauge, Star, Users } from "lucide-react";
+import type { AnalysisResult, TechnologyCategories } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScoreInfoHoverCard } from "@/components/score-info-hover-card";
 
 export function AnalysisResults({ result }: { result: AnalysisResult }) {
   const { profile } = result;
+  const categoryLabels = {
+    frontend: "Frontend",
+    backend: "Backend",
+    database: "Database",
+    devops: "DevOps",
+    ai: "AI / ML",
+    testing: "Testing",
+  } as const;
+  const categoryEntries = Object.entries(result.categories) as Array<[keyof TechnologyCategories, string[]]>;
+  const categorizedTechnologies = new Set(categoryEntries.flatMap(([, technologies]) => technologies));
+  const uncategorizedTechnologies = result.technologies.filter((technology) => !categorizedTechnologies.has(technology));
+  const scoreItems = [
+    ["Repository Quality", result.breakdown.repositoryQuality, 30, "Measures documentation quality, README completeness, setup instructions, deployment links, screenshots, and overall project presentation."],
+    ["Project Complexity", result.breakdown.projectComplexity, 25, "Measures advanced engineering features such as authentication, databases, API integrations, AI functionality, realtime systems, file uploads, and application architecture."],
+    ["Skill Diversity", result.breakdown.skillDiversity, 20, "Measures technology coverage across frontend, backend, databases, DevOps, AI/ML, and testing ecosystems."],
+    ["Activity", result.breakdown.activity, 15, "Measures repository maintenance, recent project updates, development consistency, and active contribution patterns."],
+    ["Engineering Practices", result.breakdown.engineeringPractices, 10, "Measures use of TypeScript, testing frameworks, Docker, GitHub Actions, CI/CD workflows, and professional development practices."],
+  ] as const;
   return (
     <section aria-label={`Analysis for ${profile.username}`} className="mt-10 grid gap-5 lg:grid-cols-3">
       <Card className="h-fit overflow-hidden lg:sticky lg:top-6">
@@ -30,14 +49,42 @@ export function AnalysisResults({ result }: { result: AnalysisResult }) {
 
       <div className="space-y-5 lg:col-span-2">
         <Card>
+          <CardHeader><div className="flex items-center gap-2"><Gauge aria-hidden="true" className="size-5 text-primary" /><CardTitle>Developer intelligence score</CardTitle></div><CardDescription>Evidence-based score across repository quality, complexity, skills, activity, and engineering practices.</CardDescription></CardHeader>
+          <CardContent className="grid gap-6 sm:grid-cols-[8rem_1fr] sm:items-center">
+            <div className="mx-auto grid size-28 place-items-center rounded-full border-8 border-primary/15 bg-primary/5 text-center"><div><strong className="block text-3xl text-primary">{result.score}</strong><span className="text-xs text-muted-foreground">out of 100</span></div></div>
+            <dl className="space-y-3">
+              {scoreItems.map(([label, value, maximum, description]) => (
+                <div key={label}>
+                  <div className="mb-1.5 flex items-center justify-between gap-3 text-xs"><dt><ScoreInfoHoverCard title={label} description={description} /></dt><dd className="text-muted-foreground">{value}/{maximum}</dd></div>
+                  <div role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={maximum} aria-valuenow={value} className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: `${(value / maximum) * 100}%` }} /></div>
+                </div>
+              ))}
+            </dl>
+          </CardContent>
+        </Card>
+
+        <Card>
           <CardHeader><div className="flex items-center gap-2"><Users aria-hidden="true" className="size-5 text-primary" /><CardTitle>Developer summary</CardTitle></div></CardHeader>
           <CardContent><p className="text-sm leading-7 text-muted-foreground sm:text-base">{result.summary}</p></CardContent>
         </Card>
 
         <Card>
           <CardHeader><CardTitle>Technology toolkit</CardTitle><CardDescription>Languages, frameworks, and tools found across public repositories.</CardDescription></CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            {result.technologies.length > 0 ? result.technologies.map((technology) => <Badge key={technology}>{technology}</Badge>) : <p className="text-sm text-muted-foreground">No technologies detected.</p>}
+          <CardContent className="space-y-5">
+            {categoryEntries.some(([, technologies]) => technologies.length > 0) ? (
+              categoryEntries.map(([category, technologies]) => technologies.length > 0 && (
+                <div key={category}>
+                  <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{categoryLabels[category]}</h3>
+                  <div className="flex flex-wrap gap-2">{technologies.map((technology) => <Badge key={technology}>{technology}</Badge>)}</div>
+                </div>
+              ))
+            ) : <p className="text-sm text-muted-foreground">No categorized technologies detected.</p>}
+            {uncategorizedTechnologies.length > 0 && (
+              <div>
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Languages & other</h3>
+                <div className="flex flex-wrap gap-2">{uncategorizedTechnologies.map((technology) => <Badge key={technology}>{technology}</Badge>)}</div>
+              </div>
+            )}
           </CardContent>
         </Card>
 

@@ -20,6 +20,7 @@ export interface GitHubRepository {
   full_name: string;
   html_url: string;
   description: string | null;
+  homepage: string | null;
   fork: boolean;
   archived: boolean;
   stargazers_count: number;
@@ -28,12 +29,19 @@ export interface GitHubRepository {
   topics: string[];
   pushed_at: string | null;
   size: number;
+  default_branch: string;
 }
 
 export type GitHubLanguages = Record<string, number>;
+
+export interface RepositorySourceFile {
+  path: string;
+  content: string;
+}
 
 export interface GitHubProfileData {
   user: GitHubUser;
   repositories: GitHubRepository[];
   languagesByRepo: Record<string, GitHubLanguages>;
+  sourceFilesByRepo: Record<string, RepositorySourceFile[]>;
 }
