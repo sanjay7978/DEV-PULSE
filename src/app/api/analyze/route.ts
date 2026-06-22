@@ -3,6 +3,7 @@ import { analyzeRequestSchema } from "@/lib/validation";
 import { analyzeWithGemini } from "@/services/gemini.service";
 import { getGitHubProfile } from "@/services/github.service";
 import { calculateDeveloperScore } from "@/services/scoring.service";
+import { getSkillCoverageData } from "@/lib/skill-coverage";
 import { extractTechnologies } from "@/services/technology.service";
 import type { AnalysisResult, ApiErrorResponse } from "@/types";
 
@@ -35,7 +36,8 @@ export async function POST(request: Request): Promise<Response> {
     const github = await getGitHubProfile(username);
     const technologyProfile = extractTechnologies(github);
     const developerScore = calculateDeveloperScore(github, technologyProfile);
-    const aiAnalysis = await analyzeWithGemini(github, technologyProfile);
+    const skillCoverage = getSkillCoverageData(technologyProfile.categories);
+    const aiAnalysis = await analyzeWithGemini(github, technologyProfile, developerScore, skillCoverage);
     const result: AnalysisResult = {
       profile: {
         name: github.user.name,
@@ -60,6 +62,13 @@ export async function POST(request: Request): Promise<Response> {
       experienceLevel: aiAnalysis.experienceLevel,
       score: developerScore.score,
       breakdown: developerScore.breakdown,
+      insights: {
+        strengths: aiAnalysis.strengths.slice(0, 5),
+        limitedEvidence: aiAnalysis.limitedEvidence.slice(0, 4),
+        projectInsights: aiAnalysis.projectInsights,
+        recommendedRoles: aiAnalysis.recommendedRoles.slice(0, 4),
+        profileAssessment: aiAnalysis.profileAssessment,
+      },
     };
     return Response.json(result);
   } catch (error) {

@@ -26,6 +26,18 @@ export interface GeminiAnalysis {
   strengths: string[];
   notableProjects: Array<{ name: string; reason: string }>;
   suggestedFocus: string[];
+  limitedEvidence: string[];
+  projectInsights: string;
+  recommendedRoles: string[];
+  profileAssessment: string;
+}
+
+export interface RecruiterInsights {
+  strengths: string[];
+  limitedEvidence: string[];
+  projectInsights: string;
+  recommendedRoles: string[];
+  profileAssessment: string;
 }
 
 export interface ProfileDto {
@@ -69,6 +81,7 @@ export interface AnalysisResult {
   experienceLevel: GeminiAnalysis["experienceLevel"];
   score: number;
   breakdown: ScoreBreakdown;
+  insights: RecruiterInsights;
 }
 
 export interface ApiErrorResponse {

@@ -73,6 +73,13 @@ Successful responses use a frontend-friendly DTO and contain the five most recen
     "skillDiversity": 17,
     "activity": 10,
     "engineeringPractices": 8
+  },
+  "insights": {
+    "strengths": ["Full Stack Development", "Modern JavaScript Ecosystem"],
+    "limitedEvidence": ["Automated Testing", "Cloud Infrastructure"],
+    "projectInsights": "A 100-150 word recruiter briefing grounded in public repository evidence.",
+    "recommendedRoles": ["Full Stack Developer", "Software Engineer"],
+    "profileAssessment": "Well-Rounded Full Stack Portfolio"
   }
 }
 ```
