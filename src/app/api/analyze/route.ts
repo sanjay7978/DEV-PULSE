@@ -1,4 +1,3 @@
-import { ZodError } from "zod";
 import { AppError } from "@/lib/errors";
 import { analyzeRequestSchema } from "@/lib/validation";
 import { analyzeWithGemini } from "@/services/gemini.service";
@@ -17,7 +16,21 @@ export async function POST(request: Request): Promise<Response> {
       throw new AppError("Request body must be valid JSON", 400, "INVALID_JSON");
     }
 
-    const { username } = analyzeRequestSchema.parse(body);
+    const requestData = analyzeRequestSchema.safeParse(body);
+    if (!requestData.success) {
+      return Response.json(
+        {
+          error: {
+            code: "VALIDATION_ERROR",
+            message: requestData.error.issues[0]?.message ?? "Invalid request",
+            details: requestData.error.flatten(),
+          },
+        } satisfies ApiErrorResponse,
+        { status: 400 },
+      );
+    }
+
+    const { username } = requestData.data;
     const github = await getGitHubProfile(username);
     const technologyProfile = extractTechnologies(github);
     const aiAnalysis = await analyzeWithGemini(github, technologyProfile);
@@ -45,12 +58,6 @@ export async function POST(request: Request): Promise<Response> {
     };
     return Response.json(result);
   } catch (error) {
-    if (error instanceof ZodError) {
-      return Response.json(
-        { error: { code: "VALIDATION_ERROR", message: error.issues[0]?.message ?? "Invalid request", details: error.flatten() } } satisfies ApiErrorResponse,
-        { status: 400 },
-      );
-    }
     if (error instanceof AppError) {
       return Response.json(
         { error: { code: error.code, message: error.message } } satisfies ApiErrorResponse,

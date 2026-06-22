@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { BookOpen, ExternalLink, GitFork, Star, Users } from "lucide-react";
 import type { AnalysisResult } from "@/types";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +11,7 @@ export function AnalysisResults({ result }: { result: AnalysisResult }) {
       <Card className="h-fit overflow-hidden lg:sticky lg:top-6">
         <div className="h-24 bg-gradient-to-br from-primary/20 via-accent to-secondary" />
         <CardHeader className="-mt-16 items-center text-center">
-          <img src={profile.avatarUrl} alt={`${profile.username}'s avatar`} className="size-24 rounded-full border-4 border-card bg-card object-cover shadow-md" />
+          <Image src={profile.avatarUrl} alt={`${profile.username}'s avatar`} width={96} height={96} className="size-24 rounded-full border-4 border-card bg-card object-cover shadow-md" />
           <div className="pt-2">
             <CardTitle className="text-xl">{profile.name ?? profile.username}</CardTitle>
             <CardDescription>@{profile.username}</CardDescription>

@@ -1,6 +1,6 @@
 # Dev Pulse
 
-Backend foundation for an AI-powered GitHub profile analyzer. Built with Next.js 15 App Router, TypeScript, Tailwind CSS 4, and shadcn/ui conventions.
+An AI-powered GitHub profile analyzer built with Next.js 15 App Router, TypeScript, Tailwind CSS 4, and shadcn/ui conventions.
 
 ## Setup
 
@@ -10,7 +10,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-The application runs at `http://localhost:3000`. The root page is intentionally only a basic health-style placeholder; landing and dashboard UI are outside this implementation.
+The application runs at `http://localhost:3000`. Enter a public GitHub username to view a responsive profile analysis, technology toolkit, and top repositories.
 
 ## API
 
@@ -31,6 +31,35 @@ curl -X POST http://localhost:3000/api/analyze \
 ```
 
 The endpoint validates the username, retrieves the public GitHub profile and up to 100 owned repositories, ignores forks and archived repositories, aggregates repository language bytes and topics, and asks Gemini for a structured profile assessment.
+
+Successful responses use a frontend-friendly DTO and contain the five most recently updated original repositories:
+
+```json
+{
+  "profile": {
+    "name": "The Octocat",
+    "username": "octocat",
+    "avatarUrl": "https://avatars.githubusercontent.com/u/583231?v=4",
+    "bio": null,
+    "followers": 10000,
+    "following": 9,
+    "publicRepos": 8
+  },
+  "repositories": [
+    {
+      "name": "Hello-World",
+      "description": "My first repository on GitHub!",
+      "language": "JavaScript",
+      "stars": 42,
+      "forks": 10,
+      "url": "https://github.com/octocat/Hello-World"
+    }
+  ],
+  "technologies": ["JavaScript"],
+  "summary": "A concise AI-generated profile summary.",
+  "experienceLevel": "Intermediate"
+}
+```
 
 Errors have a stable shape:
 
@@ -54,9 +83,13 @@ src/
 │   ├── api/analyze/route.ts    # HTTP boundary and error mapping
 │   ├── globals.css             # Tailwind CSS 4 and theme variables
 │   ├── layout.tsx
-│   └── page.tsx                # Deliberately minimal placeholder
-├── components/ui/              # shadcn/ui components can be generated here
-├── hooks/                      # shared React hooks
+│   └── page.tsx                # Responsive analyzer page
+├── components/
+│   ├── analysis-loading.tsx    # Accessible loading skeleton
+│   ├── analysis-results.tsx    # Profile analysis results
+│   ├── github-analyzer.tsx     # Client state and API integration
+│   ├── search-form.tsx         # Username form
+│   └── ui/                     # shadcn/ui primitives
 ├── lib/
 │   ├── env.ts                  # validated server-only configuration
 │   ├── errors.ts               # application error model
@@ -72,12 +105,13 @@ src/
     └── index.ts
 ```
 
-The API route is kept thin. Services own external calls and deterministic extraction, while shared types define the contract between each layer. Gemini uses JSON response schema enforcement so consumers receive predictable fields.
+The API route is kept thin. Services own external calls and deterministic extraction, while shared types define the contract between each layer. Gemini uses JSON response schema enforcement so consumers receive predictable fields. The client uses local React state for the single request lifecycle: idle, loading, error, or results.
 
 ## Verification
 
 ```bash
 npm run typecheck
+npm run lint
 npm run build
 ```
 
