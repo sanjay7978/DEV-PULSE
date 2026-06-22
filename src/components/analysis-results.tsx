@@ -1,9 +1,18 @@
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { BookOpen, ExternalLink, GitFork, Gauge, Star, Users } from "lucide-react";
 import type { AnalysisResult, TechnologyCategories } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScoreInfoHoverCard } from "@/components/score-info-hover-card";
+
+const SkillVisualization = dynamic(
+  () => import("@/components/skill-visualization").then((module) => module.SkillVisualization),
+  {
+    ssr: false,
+    loading: () => <Card className="h-80 animate-pulse bg-muted/40" aria-label="Loading skill visualization" />,
+  },
+);
 
 export function AnalysisResults({ result }: { result: AnalysisResult }) {
   const { profile } = result;
@@ -62,6 +71,8 @@ export function AnalysisResults({ result }: { result: AnalysisResult }) {
             </dl>
           </CardContent>
         </Card>
+
+        <SkillVisualization categories={result.categories} />
 
         <Card>
           <CardHeader><div className="flex items-center gap-2"><Users aria-hidden="true" className="size-5 text-primary" /><CardTitle>Developer summary</CardTitle></div></CardHeader>
