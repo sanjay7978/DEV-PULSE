@@ -1,6 +1,7 @@
 import { AppError } from "@/lib/errors";
 import { getEnv } from "@/lib/env";
-import type { GeminiAnalysis, GitHubProfileData, TechnologyProfile } from "@/types";
+import type { DeveloperScore, GeminiAnalysis, GitHubProfileData, TechnologyProfile } from "@/types";
+import type { SkillCoverageDatum } from "@/lib/skill-coverage";
 
 interface GeminiResponse {
   candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
@@ -15,7 +16,7 @@ const responseSchema = {
       type: "STRING",
       enum: ["Beginner", "Intermediate", "Advanced", "Expert"],
     },
-    strengths: { type: "ARRAY", items: { type: "STRING" } },
+    strengths: { type: "ARRAY", minItems: 3, maxItems: 5, items: { type: "STRING" } },
     notableProjects: {
       type: "ARRAY",
       items: {
@@ -25,13 +26,19 @@ const responseSchema = {
       },
     },
     suggestedFocus: { type: "ARRAY", items: { type: "STRING" } },
+    limitedEvidence: { type: "ARRAY", maxItems: 4, items: { type: "STRING" } },
+    projectInsights: { type: "STRING" },
+    recommendedRoles: { type: "ARRAY", maxItems: 4, items: { type: "STRING" } },
+    profileAssessment: { type: "STRING" },
   },
-  required: ["summary", "experienceLevel", "strengths", "notableProjects", "suggestedFocus"],
+  required: ["summary", "experienceLevel", "strengths", "notableProjects", "suggestedFocus", "limitedEvidence", "projectInsights", "recommendedRoles", "profileAssessment"],
 };
 
 export async function analyzeWithGemini(
   github: GitHubProfileData,
   technologyProfile: TechnologyProfile,
+  developerScore: DeveloperScore,
+  skillCoverage: SkillCoverageDatum[],
 ): Promise<GeminiAnalysis> {
   const env = getEnv();
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(env.GEMINI_MODEL)}:generateContent?key=${encodeURIComponent(env.GEMINI_API_KEY)}`;
@@ -44,11 +51,13 @@ export async function analyzeWithGemini(
     topics: repository.topics,
   }));
   const prompt = [
-    "Analyze this public GitHub developer profile. Be factual, concise, constructive, and base every claim only on the supplied data. Classify experienceLevel as Beginner, Intermediate, Advanced, or Expert.",
+    "Analyze this public GitHub developer profile for a recruiter. Be factual and base every claim only on supplied public evidence. Classify experienceLevel as Beginner, Intermediate, Advanced, or Expert. Return 3-5 strengths as concise capability phrases. Return up to 4 limitedEvidence phrases for areas with missing or low public evidence; never call them weaknesses or claim the developer lacks a skill. Write projectInsights as a professional, easy-to-scan recruiter briefing of 100-150 words without generic AI language. Recommend at most 4 roles, and only roles directly supported by the evidence. profileAssessment must be one concise, neutral portfolio description and must never make a hiring recommendation or use Recommended, Not Recommended, or Recommended with Reservations.",
     JSON.stringify({
       user: { login: github.user.login, name: github.user.name, bio: github.user.bio },
       repositories,
       technologyProfile,
+      developerScore,
+      skillCoverage,
     }),
   ].join("\n\n");
 

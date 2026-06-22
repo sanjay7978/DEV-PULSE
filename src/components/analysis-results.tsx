@@ -1,10 +1,11 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { BookOpen, ExternalLink, GitFork, Gauge, Star, Users } from "lucide-react";
+import { BookOpen, ExternalLink, GitFork, Gauge, Star } from "lucide-react";
 import type { AnalysisResult, TechnologyCategories } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScoreInfoHoverCard } from "@/components/score-info-hover-card";
+import { DeveloperInsights } from "@/components/developer-insights";
 
 const SkillVisualization = dynamic(
   () => import("@/components/skill-visualization").then((module) => module.SkillVisualization),
@@ -74,10 +75,7 @@ export function AnalysisResults({ result }: { result: AnalysisResult }) {
 
         <SkillVisualization categories={result.categories} />
 
-        <Card>
-          <CardHeader><div className="flex items-center gap-2"><Users aria-hidden="true" className="size-5 text-primary" /><CardTitle>Developer summary</CardTitle></div></CardHeader>
-          <CardContent><p className="text-sm leading-7 text-muted-foreground sm:text-base">{result.summary}</p></CardContent>
-        </Card>
+        <DeveloperInsights insights={result.insights} />
 
         <Card>
           <CardHeader><CardTitle>Technology toolkit</CardTitle><CardDescription>Languages, frameworks, and tools found across public repositories.</CardDescription></CardHeader>

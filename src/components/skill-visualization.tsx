@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import {
   PolarAngleAxis,
   PolarGrid,
@@ -11,33 +10,15 @@ import {
   Tooltip,
 } from "recharts";
 import type { TechnologyCategories } from "@/types";
+import { getSkillCoverageData } from "@/lib/skill-coverage";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface SkillVisualizationProps {
   categories: TechnologyCategories;
 }
 
-const categoryDefinitions: Array<{
-  key: keyof TechnologyCategories;
-  label: string;
-  taxonomySize: number;
-}> = [
-  { key: "frontend", label: "Frontend", taxonomySize: 5 },
-  { key: "backend", label: "Backend", taxonomySize: 6 },
-  { key: "database", label: "Database", taxonomySize: 6 },
-  { key: "ai", label: "AI/ML", taxonomySize: 5 },
-  { key: "devops", label: "DevOps", taxonomySize: 6 },
-  { key: "testing", label: "Testing", taxonomySize: 4 },
-];
-
 export function SkillVisualization({ categories }: SkillVisualizationProps) {
-  const data = useMemo(
-    () => categoryDefinitions.map(({ key, label, taxonomySize }) => ({
-      category: label,
-      value: Math.min(100, Math.round((categories[key].length / taxonomySize) * 100)),
-    })),
-    [categories],
-  );
+  const data = getSkillCoverageData(categories);
 
   return (
     <section aria-labelledby="skill-breakdown-title" className="space-y-5">
