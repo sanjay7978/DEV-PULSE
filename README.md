@@ -726,5 +726,3 @@ If you found DevPulse AI interesting:
 **Turning GitHub Profiles into Developer Intelligence**
 
 Built with ❤️ using Next.js, TypeScript, Node.js, PostgreSQL, and AI
-
-</div>
