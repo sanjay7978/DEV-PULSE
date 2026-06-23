@@ -1,6 +1,6 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { BookOpen, ExternalLink, GitFork, Gauge, Star } from "lucide-react";
+import { AlertTriangle, BookOpen, ExternalLink, GitFork, Gauge, Star } from "lucide-react";
 import type { AnalysisResult, TechnologyCategories } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,6 +58,16 @@ export function AnalysisResults({ result }: { result: AnalysisResult }) {
       </Card>
 
       <div className="space-y-5 lg:col-span-2">
+        {!result.aiInsightsAvailable && (
+          <div role="status" className="flex gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-amber-950 dark:text-amber-100">
+            <AlertTriangle aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-amber-600 dark:text-amber-400" />
+            <div>
+              <p className="font-medium">AI insights are temporarily unavailable due to high demand.</p>
+              <p className="mt-1 text-sm opacity-80">Core GitHub analysis has still been completed successfully.</p>
+            </div>
+          </div>
+        )}
+
         <Card>
           <CardHeader><div className="flex items-center gap-2"><Gauge aria-hidden="true" className="size-5 text-primary" /><CardTitle>Developer intelligence score</CardTitle></div><CardDescription>Evidence-based score across repository quality, complexity, skills, activity, and engineering practices.</CardDescription></CardHeader>
           <CardContent className="grid gap-6 sm:grid-cols-[8rem_1fr] sm:items-center">

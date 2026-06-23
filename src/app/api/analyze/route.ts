@@ -5,9 +5,30 @@ import { getGitHubProfile } from "@/services/github.service";
 import { calculateDeveloperScore } from "@/services/scoring.service";
 import { getSkillCoverageData } from "@/lib/skill-coverage";
 import { extractTechnologies } from "@/services/technology.service";
-import type { AnalysisResult, ApiErrorResponse } from "@/types";
+import type { AnalysisResult, ApiErrorResponse, GeminiAnalysis } from "@/types";
 
 export const runtime = "nodejs";
+
+const GEMINI_RETRY_DELAY_MS = 3_000;
+
+type AiAnalysisResult = Omit<GeminiAnalysis, "experienceLevel"> & {
+  experienceLevel: GeminiAnalysis["experienceLevel"] | "Unavailable";
+};
+
+const fallbackAiAnalysis: AiAnalysisResult = {
+  summary: "AI summary is temporarily unavailable due to high demand.",
+  experienceLevel: "Unavailable",
+  strengths: [],
+  notableProjects: [],
+  suggestedFocus: [],
+  limitedEvidence: [],
+  projectInsights: "AI-generated project insights are temporarily unavailable.",
+  recommendedRoles: [],
+  profileAssessment: "Profile assessment is temporarily unavailable.",
+};
+
+const wait = (milliseconds: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
 
 export async function POST(request: Request): Promise<Response> {
   try {
@@ -37,7 +58,23 @@ export async function POST(request: Request): Promise<Response> {
     const technologyProfile = extractTechnologies(github);
     const developerScore = calculateDeveloperScore(github, technologyProfile);
     const skillCoverage = getSkillCoverageData(technologyProfile.categories);
-    const aiAnalysis = await analyzeWithGemini(github, technologyProfile, developerScore, skillCoverage);
+    let aiAnalysis: AiAnalysisResult;
+    let aiInsightsAvailable = true;
+
+    try {
+      aiAnalysis = await analyzeWithGemini(github, technologyProfile, developerScore, skillCoverage);
+    } catch (firstError) {
+      console.error("Gemini analysis failed; retrying once:", firstError);
+      await wait(GEMINI_RETRY_DELAY_MS);
+
+      try {
+        aiAnalysis = await analyzeWithGemini(github, technologyProfile, developerScore, skillCoverage);
+      } catch (retryError) {
+        console.error("Gemini analysis retry failed; using fallback AI data:", retryError);
+        aiAnalysis = fallbackAiAnalysis;
+        aiInsightsAvailable = false;
+      }
+    }
     const result: AnalysisResult = {
       profile: {
         name: github.user.name,
@@ -60,6 +97,7 @@ export async function POST(request: Request): Promise<Response> {
       categories: technologyProfile.categories,
       summary: aiAnalysis.summary,
       experienceLevel: aiAnalysis.experienceLevel,
+      aiInsightsAvailable,
       score: developerScore.score,
       breakdown: developerScore.breakdown,
       insights: {

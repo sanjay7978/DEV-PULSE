@@ -78,7 +78,8 @@ export interface AnalysisResult {
   technologies: string[];
   categories: TechnologyCategories;
   summary: string;
-  experienceLevel: GeminiAnalysis["experienceLevel"];
+  experienceLevel: GeminiAnalysis["experienceLevel"] | "Unavailable";
+  aiInsightsAvailable: boolean;
   score: number;
   breakdown: ScoreBreakdown;
   insights: RecruiterInsights;
