@@ -4,6 +4,7 @@ import { analyzeWithGemini } from "@/services/gemini.service";
 import { getGitHubProfile } from "@/services/github.service";
 import { calculateDeveloperScore } from "@/services/scoring.service";
 import { getSkillCoverageData } from "@/lib/skill-coverage";
+import { enforceAiRateLimit } from "@/lib/rate-limit";
 import { extractTechnologies } from "@/services/technology.service";
 import type { AnalysisResult, ApiErrorResponse, GeminiAnalysis } from "@/types";
 
@@ -31,6 +32,11 @@ const wait = (milliseconds: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
 
 export async function POST(request: Request): Promise<Response> {
+  // This limiter is intentionally scoped to the AI analysis route. Run it
+  // before parsing or external API calls so blocked traffic consumes no quota.
+  const rateLimitResponse = await enforceAiRateLimit(request);
+  if (rateLimitResponse) return rateLimitResponse;
+
   try {
     let body: unknown;
     try {
