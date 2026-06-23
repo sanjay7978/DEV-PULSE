@@ -1,11 +1,7 @@
 import { isIP } from "node:net";
 import { ipKeyGenerator, MemoryStore, type Options } from "express-rate-limit";
 
-<<<<<<< HEAD
-const AI_RATE_LIMIT = 100;
-=======
 const AI_RATE_LIMIT = 10;
->>>>>>> 28a8c86 (changed the ai rate limit from 100 to 10)
 const AI_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1_000;
 
 declare global {
