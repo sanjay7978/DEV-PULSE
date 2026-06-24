@@ -41,11 +41,11 @@ export function GitHubAnalyzer() {
   }
 
   return (
-    <>
+    <div className="contents">
       <SearchForm username={username} isLoading={isLoading} onUsernameChange={setUsername} onSubmit={analyze} />
-      {error && <Alert className="mx-auto mt-5 flex max-w-2xl items-start gap-3"><CircleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" /><div><p className="font-semibold">Analysis failed</p><p className="mt-1 text-destructive/80">{error}</p></div></Alert>}
+      {error && <Alert className="mt-5 flex items-start gap-3 border-red-500/30 bg-red-500/10 text-red-100 lg:col-start-2"><CircleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" /><div><p className="font-semibold">Analysis failed</p><p className="mt-1 text-red-200/75">{error}</p></div></Alert>}
       {isLoading && <AnalysisLoading />}
       {result && <AnalysisResults result={result} />}
-    </>
+    </div>
   );
 }
