@@ -85,17 +85,16 @@ export function ScoreInfoHoverCard({ title, description }: ScoreInfoHoverCardPro
         role="tooltip"
         aria-hidden={!isOpen}
         className={cn(
-          "fixed z-50 flex h-[11.25rem] w-[min(20rem,calc(100vw-1.5rem))] origin-bottom-left flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/75 p-5 text-left shadow-2xl shadow-slate-950/15 backdrop-blur-xl transition-all duration-200 ease-out",
-          "before:pointer-events-none before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/45 before:to-primary/5",
+          "fixed z-50 flex h-[11.25rem] w-[min(20rem,calc(100vw-1.5rem))] origin-bottom-left flex-col overflow-hidden rounded-xl border border-border bg-card p-5 text-left shadow-2xl shadow-black/35 transition-all duration-200 ease-out",
           isOpen ? "visible scale-100 opacity-100" : "invisible pointer-events-none scale-95 opacity-0",
         )}
         style={{ left: position.left, top: position.top }}
       >
-        <span className="relative mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
+        <span className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
           <span className="grid size-7 place-items-center rounded-lg bg-primary/10 text-primary"><Info aria-hidden="true" className="size-4" /></span>
           {title}
         </span>
-        <span className="relative text-sm leading-6 text-muted-foreground">{description}</span>
+        <span className="text-sm leading-6 text-muted-foreground">{description}</span>
       </span>
     </span>
   );

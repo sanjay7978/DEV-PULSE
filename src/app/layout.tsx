@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Dev Pulse",
-  description: "AI-powered GitHub developer profile analysis",
+  title: "DevPulse AI | Developer Intelligence",
+  description: "Recruiter-focused GitHub developer intelligence and profile analysis",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body>{children}</body>
     </html>
   );
