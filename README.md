@@ -4,10 +4,6 @@
 
 <!-- LOGO PLACEHOLDER -->
 
-<img src="./public/logo.png" alt="DevPulse AI Logo" width="150"/>
-
-# DevPulse AI
-
 ### AI-Powered Developer Intelligence Platform
 
 Transform GitHub Profiles into Recruiter-Ready Developer Intelligence Reports
