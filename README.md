@@ -287,7 +287,7 @@ cd devpulse-ai
 ## Install Frontend Dependencies
 
 ```bash
-npm install
+npm install / npm i
 ```
 
 ---
