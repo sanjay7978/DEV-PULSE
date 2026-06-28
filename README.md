@@ -538,7 +538,7 @@ Final Intelligence Score:
 
 ---
 
-# ⚔️ Challenges Solved
+# ⚔️ Challenge Solved
 
 ### GitHub Data Aggregation
 
