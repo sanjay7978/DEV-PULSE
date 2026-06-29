@@ -1,4 +1,5 @@
 import { AppError } from "@/lib/errors";
+import { hasValidSessionFromCookieHeader } from "@/lib/auth";
 import { analyzeRequestSchema } from "@/lib/validation";
 import { analyzeWithGemini } from "@/services/gemini.service";
 import { getGitHubProfile } from "@/services/github.service";
@@ -32,6 +33,15 @@ const wait = (milliseconds: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
 
 export async function POST(request: Request): Promise<Response> {
+  const hasValidSession = await hasValidSessionFromCookieHeader(request.headers.get("cookie"));
+
+  if (!hasValidSession) {
+    return Response.json(
+      { error: { code: "UNAUTHORIZED", message: "Unauthorized" } } satisfies ApiErrorResponse,
+      { status: 401 },
+    );
+  }
+
   // This limiter is intentionally scoped to the AI analysis route. Run it
   // before parsing or external API calls so blocked traffic consumes no quota.
   const rateLimitResponse = await enforceAiRateLimit(request);
