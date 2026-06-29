@@ -1,8 +1,9 @@
-"use client";
-
 import { Activity, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { isValidSessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
 
 function GoogleIcon() {
   return (
@@ -27,9 +28,13 @@ function GoogleIcon() {
   );
 }
 
-export default function Home() {
-  function handleGoogleSignIn() {
-    window.location.href = "/api/auth/login";
+export default async function Home() {
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  const hasValidSession = await isValidSessionToken(sessionToken);
+
+  if (hasValidSession) {
+    redirect("/dashboard");
   }
 
   return (
@@ -68,14 +73,12 @@ export default function Home() {
               Analyze GitHub profiles, uncover developer strengths, and turn public engineering signals into recruiter-ready intelligence.
             </p>
 
-            <Button
-              type="button"
-              className="mt-8 h-12 w-full rounded-xl bg-white text-slate-950 shadow-lg shadow-black/20 transition hover:bg-slate-100"
-              onClick={handleGoogleSignIn}
-            >
-              <GoogleIcon />
-              Continue with Google
-              <ArrowRight aria-hidden="true" className="size-4" />
+            <Button asChild className="mt-8 h-12 w-full rounded-xl bg-white text-slate-950 shadow-lg shadow-black/20 transition hover:bg-slate-100">
+              <a href="/api/auth/login">
+                <GoogleIcon />
+                Continue with Google
+                <ArrowRight aria-hidden="true" className="size-4" />
+              </a>
             </Button>
 
             <div className="mt-6 flex items-start gap-3 rounded-xl border border-border bg-background/55 p-4 text-sm text-muted-foreground">
