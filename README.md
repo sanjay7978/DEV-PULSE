@@ -279,6 +279,6 @@ Distributed under the [MIT License](./LICENSE). See `LICENSE` for details.
 
 <div align="center">
 
-**DevPulse AI** — Turning GitHub profiles into developer intelligence.
+**DevPulse AI** — Turning GitHub profiles into developer intelligence making it easy for recruiters .
 
 </div>
