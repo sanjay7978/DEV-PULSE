@@ -1,7 +1,6 @@
 import { Activity, LayoutDashboard, ShieldCheck } from "lucide-react";
 import { GitHubAnalyzer } from "@/components/github-analyzer";
 import { Button } from "@/components/ui/button";
-
 export default function DashboardPage() {
   return (
     <main className="min-h-screen bg-background">
