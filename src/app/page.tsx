@@ -38,11 +38,12 @@ export default async function Home() {
   }
 
   return (
-    <main className="relative grid min-h-screen place-items-center overflow-hidden bg-background px-4 py-10">
+    <main className="relative flex min-h-screen flex-col overflow-hidden bg-background">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,color-mix(in_oklab,var(--primary)_28%,transparent),transparent_42%)]" />
       <div className="absolute inset-x-0 bottom-0 h-1/2 bg-[linear-gradient(to_top,color-mix(in_oklab,var(--card)_75%,transparent),transparent)]" />
 
-      <section className="relative z-10 w-full max-w-md">
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 py-10">
+      <section className="w-full max-w-md">
         <div className="mb-8 flex justify-center">
           <div className="flex items-center gap-3">
             <span className="grid size-11 place-items-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/25">
@@ -88,6 +89,19 @@ export default async function Home() {
           </CardContent>
         </Card>
       </section>
+      </div>
+
+      <footer className="relative z-10 border-t border-border/60 bg-background/40 px-4 py-6 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-md flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-left">
+          <p className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">DevPulse</span>{" "}
+            <span className="text-primary">AI</span>
+          </p>
+          <p className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} DevPulse. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </main>
   );
 }
