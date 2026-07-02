@@ -24,7 +24,7 @@
 
 ## What is DevPulse AI?
 
-DevPulse AI is an AI-powered developer intelligence platform that analyzes any public GitHub profile and converts it into a structured, recruiter-ready technical report. It extracts technologies, calculates an evidence-based developer intelligence score, and generates AI-driven insights — eliminating the manual, time-consuming work of reviewing repositories one by one.
+DevPulse AI is an AI-powered developer intelligence platform that analyzes any public GitHub profile and converts it into a structured, recruiter-ready technical report. It extracts technologies, calculates an evidence-based developer intelligence score, and generates,AI-driven insights — eliminating the manual, time-consuming work of reviewing repositories one by one.
 
 Built for recruiters who need signal over noise, and developers who want their GitHub work to speak with clarity.
 
